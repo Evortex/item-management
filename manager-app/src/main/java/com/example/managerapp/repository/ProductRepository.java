@@ -1,8 +1,16 @@
 package com.example.managerapp.repository;
 
-import org.springframework.stereotype.Repository;
+import com.example.managerapp.entity.Product;
 
-@Repository
+import java.util.List;
+import java.util.Optional;
+
+
 public interface ProductRepository {
 
+    List<Product> findAll();
+
+    Product save(Product product);
+
+    Optional<Product> findById(Integer productId);
 }
