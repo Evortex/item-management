@@ -1,6 +1,8 @@
 package com.example.managerapp.controller;
 
+import com.example.managerapp.client.ProductsRestClient;
 import com.example.managerapp.controller.payload.NewProductPayload;
+import com.example.managerapp.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("catalogue/products")
 public class ProductsController {
 
-    private final ProductService productService;
+    private final ProductsRestClient productsRestClient;
 
     @GetMapping("list")
     public String getProductsList(Model model) {
-        model.addAttribute("products", this.productService.findAllProducts());
+        model.addAttribute("products", this.productsRestClient.findAllProducts());
         return "catalogue/products/list";
     }
 
@@ -35,8 +37,8 @@ public class ProductsController {
             .map(ObjectError::getDefaultMessage).toList());
             return "catalogue/products/new_product";
         } else {
-            Product product = this.productService.createProduct(payload.title(), payload.details());
-            return "redirect:/catalogue/products/list/%d".formatted(product.getId());
+            Product product = this.productsRestClient.createProduct(payload.title(), payload.details());
+            return "redirect:/catalogue/products/list/%d".formatted(product.id());
         }
     }
 }
