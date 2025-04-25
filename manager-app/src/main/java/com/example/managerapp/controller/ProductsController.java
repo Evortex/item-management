@@ -1,5 +1,6 @@
 package com.example.managerapp.controller;
 
+import com.example.managerapp.client.BadRequestException;
 import com.example.managerapp.client.ProductsRestClient;
 import com.example.managerapp.controller.payload.NewProductPayload;
 import com.example.managerapp.entity.Product;
@@ -30,15 +31,15 @@ public class ProductsController {
     }
 
     @PostMapping("create")
-    public String createProduct(@Validated NewProductPayload payload, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("payload", payload);
-            model.addAttribute("errors", bindingResult.getAllErrors().stream()
-            .map(ObjectError::getDefaultMessage).toList());
-            return "catalogue/products/new_product";
-        } else {
+    public String createProduct(NewProductPayload payload,
+                                Model model) {
+        try {
             Product product = this.productsRestClient.createProduct(payload.title(), payload.details());
-            return "redirect:/catalogue/products/list/%d".formatted(product.id());
+            return "redirect:/catalogue/products/%d".formatted(product.id());
+        } catch (BadRequestException exception) {
+            model.addAttribute("payload", payload);
+            model.addAttribute("errors", exception.getErrors());
+            return "catalogue/products/new_product";
         }
     }
 }

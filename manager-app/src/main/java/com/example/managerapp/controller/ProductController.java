@@ -1,5 +1,6 @@
 package com.example.managerapp.controller;
 
+import com.example.managerapp.client.BadRequestException;
 import com.example.managerapp.client.ProductsRestClient;
 import com.example.managerapp.controller.payload.UpdateProductPayload;
 import com.example.managerapp.entity.Product;
@@ -9,9 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
@@ -44,17 +43,15 @@ public class ProductController {
 
     @PostMapping("edit")
     public String updateProduct(@ModelAttribute(name = "product", binding = false) Product product
-            , @Validated UpdateProductPayload payload
-            , BindingResult bindingResult
+            , UpdateProductPayload payload
             , Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("payload", payload);
-            model.addAttribute("errors", bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).toList());
-            return "catalogue/products/edit";
-        } else {
+        try {
             this.productsRestClient.updateProduct(product.id(), payload.title(), payload.details());
             return "redirect:/catalogue/products/%d".formatted(product.id());
+        } catch (BadRequestException exception) {
+            model.addAttribute("payload", payload);
+            model.addAttribute("errors", exception.getErrors());
+            return "catalogue/products/edit";
         }
     }
 
