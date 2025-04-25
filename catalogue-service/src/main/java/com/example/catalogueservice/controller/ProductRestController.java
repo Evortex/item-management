@@ -1,6 +1,5 @@
 package com.example.catalogueservice.controller;
 
-
 import com.example.catalogueservice.controller.payload.UpdateProductPayload;
 import com.example.catalogueservice.entity.Product;
 import com.example.catalogueservice.service.ProductService;
