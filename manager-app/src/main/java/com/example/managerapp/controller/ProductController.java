@@ -1,8 +1,6 @@
 package com.example.managerapp.controller;
 
 import com.example.managerapp.controller.payload.UpdateProductPayload;
-import com.example.managerapp.entity.Product;
-import com.example.managerapp.service.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
